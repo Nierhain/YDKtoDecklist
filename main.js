@@ -1,4 +1,4 @@
-const {app, BrowserWindow} = require('electron')
+const {app, BrowserWindow, ipcMain} = require('electron')
 const axios = require('axios')
 const fs = require('fs')
 var Datastore = require('nedb')
@@ -40,12 +40,25 @@ app.on('activate', () => {
 
 function updateCards(){
     axios.get('https://db.ygoprodeck.com/api/v6/cardinfo.php').then(function (response){
-        let cards = []
-        response.data.array.forEach(card => {
-            cards.push({'id' : card.id, 'name' : card.name})
-        });
-        db.insert(cards)
+
+        db.count({}, function(err, count){
+            if( count < response.data.length){
+                let cards = []
+                db.remove({}, {multi: true}, function( err, numRemoved) {})
+        
+                response.data.forEach(card => {
+                    cards.push({'id' : card.id, 'name' : card.name})
+                });
+                console.log(cards)
+                db.insert(cards)   
+            }
+        })
     }).catch(function (error){
         console.log(error)
     })
 }
+
+ipcMain.on('update-db', (event, arg) => {
+    updateCards()
+    event.reply('db-updated', true)
+})
