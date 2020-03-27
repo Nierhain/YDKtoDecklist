@@ -2,17 +2,33 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YDK to Decklist</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=0, maximum-scale=1, minimum-scale=1">
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500&display=swap" rel="stylesheet">
+    <link href="bulma.css" rel="stylesheet">
+    <link href="style.css" rel="stylesheet">
 </head>
 <body>
 
     <button onclick="updateDatabase()" type="button" id="updateDB">Update Database</button>
-    <button onclick="ydk()" type="button" >YDK</button>
+    <button onclick="parseDeck()" type="button" >Create Decklist</button>
+    <section class="section">
+        <div class="container">
+            <div id="decklist" class="tile is-ancestor level">
+                <div id="maindeck" class="tile is-vertical level-left is-parent">
+                    <h3 id="mainHeading"></h3>
+                </div>
+                <div class="tile is-vertical is-parent level-right">
+                    <div id="extradeck" class="tile is-child">
+                        <h3 id="extraHeading"></h3>
+                    </div>
+                    <div id="sidedeck" class="tile is-child">
+                        <h3 id="sideHeading"></h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-    <div id="decklist">
-        
-    </div>
 
     <script src="index.js"></script>
 </body>

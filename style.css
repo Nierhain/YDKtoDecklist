@@ -1,0 +1,20 @@
+* {
+    font-family: 'Baloo 2';
+}
+
+body {
+    background-color: #fff;
+}
+
+button {
+    border: 1px solid rgba(0,0,0,0.1);
+    border-radius: 4px;
+    background-color: #fff;
+    text-transform: uppercase;
+    font-weight: 500;
+}
+
+ul {
+    list-style-type: none;
+    margin: 0;
+}

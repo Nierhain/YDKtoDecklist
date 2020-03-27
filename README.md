@@ -21,7 +21,7 @@ For example "Foolish Burial" in YGOPro2, where the censored and uncensored versi
 Solution: Unfortunetaly there is no automated solution to identify these codes/cards.
 But you can submit the (wrong) passcode for the card so it get's automatically converted into the right passcode.
 
-### There is a card in the decklist I did not put in the deck 
+### There is a card in the decklist I did not put in the deck (while another is missing)
 Cause: That's a thing that's most likely caused by the same thing as the aforementioned issue but the app just used a passcode that's now used for another card.
 Solution: Make sure the app you used is up to date with the TCG/OCG 
 

@@ -11,7 +11,7 @@ const cardExceptions = [
 
 
 // [{'id' : number, 'name': String, 'amount': number}]
-let deck = {'main' : {}, 'extra': {}, 'side': {}}
+let deck = {'main' : {}, 'extra': {}, 'side': {}, 'mainAmount': 0, 'extraAmount': 0, 'sideAmount': 0}
 
 function createWindow(){
 
@@ -22,7 +22,7 @@ function createWindow(){
             nodeIntegration: true
         }
     })
-
+    win.setTitle('YDK to Decklist')
     win.loadFile('index.html')
 }
 
@@ -57,54 +57,60 @@ ipcMain.on('update-db', (event, arg) => {
     event.reply('db-updated', true)
 })
 
-ipcMain.on('ydk', () => {
-    ydkToDeck(path.join(app.getAppPath(), 'ydkTest.ydk'))
+ipcMain.on('parse-deck', (event, arg) => {
+    ydkToDeck(arg)
+    event.reply('deck-parsed', deck)
 })
 
 function ydkToDeck(ydkPath){
-    fs.readFile(ydkPath, {encoding : 'utf8'} ,(err, data) => {
-        main = data.slice(data.search('#main') + 5, data.search('#extra')).split(/\r\n/i).filter((el) => {return el != ""}).sort()
-        extra = data.slice(data.search('#extra') + 6, data.search('!side')).split(/\r\n/i).filter((el) => {return el != ""}).sort()
-        side = data.slice(data.search('!side') + 5, data.length).split(/\r\n/i).filter((el) => {return el != ""}).sort()
+    var data = fs.readFileSync(ydkPath, {encoding : 'utf8'})
+    main = data.slice(data.search('#main') + 5, data.search('#extra')).split(/\r\n/i).filter((el) => {return el != ""}).sort()
+    extra = data.slice(data.search('#extra') + 6, data.search('!side')).split(/\r\n/i).filter((el) => {return el != ""}).sort()
+    side = data.slice(data.search('!side') + 5, data.length).split(/\r\n/i).filter((el) => {return el != ""}).sort()
 
-        deck.main = parseDeck(main)
-        console.log('Main parsed')
-        deck.extra = parseDeck(extra)
-        console.log('Extra parsed')
-        deck.side = parseDeck(side)
+    parsedMain = parseDeck(main)
+    parsedExtra = parseDeck(extra)
+    parsedSide = parseDeck(side)
 
-        deck.main.forEach(card => {
-            card.name = getCardName(card.id)
-        })
-        deck.extra.forEach(card => {
-            card.name = getCardName(card.id)
-        })
-        deck.side.forEach(card => {
-            card.name = getCardName(card.id)
-        })
-        console.log(deck)
-    })
+    deck.main = parsedMain.parsed
+    deck.extra = parsedExtra.parsed
+    deck.side = parsedSide.parsed
+
+    deck.mainAmount = parsedMain.maxAmount
+    deck.extraAmount = parsedExtra.maxAmount
+    deck.sideAmount = parsedSide.maxAmount
+
+    deck.main.sort(sortByAmount)
+    deck.extra.sort(sortByAmount)
+    deck.side.sort(sortByAmount)
 }
 
-function getCardName(cardid){
+function sortByAmount(a,b){
+    return b.amount - a.amount
+}
+
+function getCardName(cardID){
     var cardDB = Object.values(store.store)
-    var card = cardDB.find(entry => entry.id == cardid)
+    var card = cardDB.find(entry => entry.id == cardID)
     return card.name
 }
 
 function parseDeck(parsingDeck){
     var parsed = []
+    var totalCards = 0
     while(parsingDeck.length){
-            var card = calcCardAmount(parsingDeck)
-            parsed.push({'id' : card.id, 'name' : ' ','amount' : card.amount})
+            var card = calcPerCardAmount(parsingDeck)
+            if(foundException = cardExceptions.find((entry => entry.id == card.id))){card.id = foundException.correct_id} //check for known passcode exceptions (e.g. 'foolish burial' in ygopro2 having multiple passcodes)
+            card.name = getCardName(card.id)
+            parsed.push({'id' : card.id, 'name' : card.name,'amount' : card.amount})
             parsingDeck.splice(0,card.amount)
+            totalCards += card.amount
     }
-    return parsed
+    return { 'parsed' : parsed, 'maxAmount' : totalCards}
 }
 
-function calcCardAmount(arr){
+function calcPerCardAmount(arr){
     cardid = arr[0]
     amount = arr.filter(entry => entry == cardid)
-    if(foundException = cardExceptions.find((entry => entry.id == cardid))){cardid = foundException.correct_id}
     return {'id': cardid, 'amount': amount.length}
 }
