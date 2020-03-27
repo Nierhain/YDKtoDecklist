@@ -15,3 +15,7 @@ ipcRenderer.on('db-updated', (event, arg) => {
         }, 5000)
     }
 })
+
+function ydk(){
+    ipcRenderer.send('ydk')
+}
