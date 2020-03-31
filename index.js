@@ -1,7 +1,43 @@
 const { ipcRenderer } = require('electron')
+const { dialog } = require('electron').remote
+
+let deck = {}
+let file
+
 
 function updateDatabase(){
     ipcRenderer.send('update-db')
+}
+
+function parseDeck(){
+    if(file){
+        ipcRenderer.send('parse-deck', file)
+    } else {
+        alert('You need to select a deck first.')
+    }    
+}
+
+function showPrices(){
+    var totalPrice = 0
+    deck.main.forEach(card => {
+        totalPrice += (card.prices.cardmarket_price * card.amount)
+    })
+    console.log(totalPrice)
+}
+
+function openFile(){
+    file = dialog.showOpenDialogSync({
+        title: 'Select .ydk File',
+        filters: [
+            {name : 'Deck files', extensions: ['ydk']}
+        ],
+        properties: ['openFile']
+    }).toString()
+}
+
+function debugButton(){
+    console.log(deck)
+    console.log(file)
 }
 
 ipcRenderer.on('db-updated', (event, arg) => {
@@ -17,12 +53,9 @@ ipcRenderer.on('db-updated', (event, arg) => {
 })
 
 ipcRenderer.on('deck-parsed', (event, arg) => {
-    printDecklist(arg)
+    deck = arg
+    printDecklist(deck)
 })
-
-function parseDeck(){
-    ipcRenderer.send('parse-deck', 'ydkTest.ydk')
-}
 
 function printDecklist(deck){
     var mainDiv = document.getElementById('maindeck')

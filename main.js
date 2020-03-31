@@ -15,9 +15,11 @@ let deck = {'main' : {}, 'extra': {}, 'side': {}, 'mainAmount': 0, 'extraAmount'
 
 function createWindow(){
 
+    updateCards()
+
     let win = new BrowserWindow({
-        width: 800,
-        height: 600,
+        width: 1280,
+        height: 720,
         webPreferences: {
             nodeIntegration: true
         }
@@ -44,7 +46,7 @@ function updateCards(){
     axios.get('https://db.ygoprodeck.com/api/v6/cardinfo.php').then((response) => {
         let cards = []
         response.data.forEach(card => {
-            cards.push({'id' : card.id.toString(), 'name' : card.name})
+            cards.push({'id' : card.id.toString(), 'name' : card.name, 'type' : card.type, 'prices' : card.card_prices})
         })
         store.set(cards)
     }).catch((error) => {
@@ -89,22 +91,23 @@ function sortByAmount(a,b){
     return b.amount - a.amount
 }
 
-function getCardName(cardID){
+function getCardInfo(cardID){
     var cardDB = Object.values(store.store)
     var card = cardDB.find(entry => entry.id == cardID)
-    return card.name
+    return card
 }
 
 function parseDeck(parsingDeck){
     var parsed = []
     var totalCards = 0
     while(parsingDeck.length){
-            var card = calcPerCardAmount(parsingDeck)
-            if(foundException = cardExceptions.find((entry => entry.id == card.id))){card.id = foundException.correct_id} //check for known passcode exceptions (e.g. 'foolish burial' in ygopro2 having multiple passcodes)
-            card.name = getCardName(card.id)
-            parsed.push({'id' : card.id, 'name' : card.name,'amount' : card.amount})
-            parsingDeck.splice(0,card.amount)
-            totalCards += card.amount
+            var currentID = parsingDeck[0]
+            var amount = calcPerCardAmount(parsingDeck)
+            if(foundException = cardExceptions.find((entry => entry.id == currentID))){currentID = foundException.correct_id} //check for known passcode exceptions (e.g. 'foolish burial' in ygopro2 having multiple passcodes)
+            var card = getCardInfo(currentID)
+            parsed.push({'id' : card.id, 'name' : card.name, 'amount' : amount, 'type' : card.type, 'prices': card.prices[0]})
+            parsingDeck.splice(0, amount)
+            totalCards += amount
     }
     return { 'parsed' : parsed, 'maxAmount' : totalCards}
 }
@@ -112,5 +115,5 @@ function parseDeck(parsingDeck){
 function calcPerCardAmount(arr){
     cardid = arr[0]
     amount = arr.filter(entry => entry == cardid)
-    return {'id': cardid, 'amount': amount.length}
+    return amount.length
 }
