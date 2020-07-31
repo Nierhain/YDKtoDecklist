@@ -1,5 +1,5 @@
 # YDKtoDecklist
-This little app converts a .ydk file into a decklist you can paste on sites like [cardmarket](https://www.cardmarket.com), Deck Builder's Toolkit](http://dbtoolkit.com/loaddeck.php), etc.
+This little app converts a .ydk file into a decklist you can paste on sites like [cardmarket](https://www.cardmarket.com), [Deck Builder's Toolkit](http://dbtoolkit.com/loaddeck.php), etc.
 
 ## Features
 
