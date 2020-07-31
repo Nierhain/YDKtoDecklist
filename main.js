@@ -17,7 +17,7 @@ function createWindow(){
 
     win = new BrowserWindow({
         backgroundColor: '#121212',
-        frame: true,
+        frame: false,
         width: 1280,
         height: 720,
         title: 'YDK to Decklist',
