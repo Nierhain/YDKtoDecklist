@@ -1,20 +1,87 @@
 * {
     font-family: 'Baloo 2';
+    color: #fff;
 }
 
-body {
-    background-color: #fff;
+html, body {
+    height: 100%;
+    background-color: #121212;
 }
 
-button {
+nav {
+    position: fixed;
+    width: 100%;
+    height: 32px;
+    background-color: #1f1f1f;
+    -webkit-app-region: drag;
+    padding: 0;
+}
+
+nav a:hover {
+    background-color: rgba(0,0,0,0.75)
+}
+
+nav .windowControl {
+    position: absolute;
+    right: 0
+}
+
+nav .windowName {
+    float: left;
+}
+
+.title {
+    margin: 5px;
+    color: #fff;
+}
+
+.titleButton {
+    margin: 0;
+    cursor: initial;
+    -webkit-app-region: no-drag;
+}
+
+.actions {
+    position: relative;
+    padding-top: 0;
+    margin-top: 0;
+    right: 0;
+}
+
+.actions > button, .debugButton {
+    margin-bottom: 10px;
+    height: 40px;
+    width: 200px;
+    font-size: 1.25rem;
     border: 1px solid rgba(0,0,0,0.1);
     border-radius: 4px;
-    background-color: #fff;
+    background-color: #383838;
     text-transform: uppercase;
     font-weight: 500;
+    display: flex;
+    z-index: initial;
 }
 
 ul {
     list-style-type: none;
     margin: 0;
 }
+
+#decklist {
+    background-color: #1e1e1e;
+}
+
+::-webkit-scrollbar {
+    display: none;
+}
+
+::-webkit-scrollbar-track {
+    background-color: rgba(255,255,255,0.5);
+    border-radius: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #fff;
+    border-radius: 8px;
+}
+

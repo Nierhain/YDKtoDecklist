@@ -4,34 +4,59 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=0, maximum-scale=1, minimum-scale=1">
     <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://cdn.materialdesignicons.com/5.0.45/css/materialdesignicons.min.css" rel="stylesheet">
     <link href="bulma.css" rel="stylesheet">
     <link href="style.css" rel="stylesheet">
 </head>
 <body>
-    <button onclick="debugButton()" type="button" >DEBUG</button>
-    <button onclick="updateDatabase()" type="button" id="updateDB">Update Database</button>
-    <button onclick="openFile()" type="button" >Select File</button>
-    <button onclick="parseDeck()" type="button" >Create Decklist</button>
-    <button onclick="showPrices()" type="button" >Load Prices</button>
+    <nav>
+        <h3 class="title is-4 windowName">YDK to Decklist</h3>
+        <div class="windowControl">
+          <a onclick="minimizeApp()" class="titleButton icon is-medium">
+                <i class="mdi mdi-window-minimize mdi-24px"></i>
+          </a>
+          <a onclick="maximizeApp()" class="titleButton icon is-medium"  id="restoreButton">
+                <i class="mdi mdi-window-restore mdi-24px"></i>
+          </a>
+          <a onclick="maximizeApp()" class="titleButton icon is-medium"  id="maximizeButton">
+            <i class="mdi mdi-window-maximize mdi-24px"></i>
+          </a>
+          <a onclick="closeApp()" class="titleButton icon is-medium">
+                <i class="mdi mdi-close mdi-24px"></i>
+          </a>
+        </div>
+    </nav>
     <section class="section">
-        <div class="container">
-            <div id="decklist" class="tile is-ancestor level">
-                <div id="maindeck" class="tile is-vertical level-left is-parent">
-                    <h3 id="mainHeading"></h3>
-                </div>
-                <div class="tile is-vertical is-parent level-right">
-                    <div id="extradeck" class="tile is-child">
-                        <h3 id="extraHeading"></h3>
-                    </div>
-                    <div id="sidedeck" class="tile is-child">
-                        <h3 id="sideHeading"></h3>
+        <div class="columns">
+            <div class="column is-four-fifths">
+                <div id="decklist" class="tile is-ancestor level">
+                    <div class="tile is-parent">
+                        <h3 class="title is-3">Decklist</h3>
+                        <div id="maindeck" class="tile is-vertical level-left is-parent">
+                            <h3 id="mainHeading"></h3>
+                        </div>
+                        <div class="tile is-vertical is-parent level-right">
+                            <div id="extradeck" class="tile is-child">
+                                <h3 id="extraHeading"></h3>
+                            </div>
+                            <div id="sidedeck" class="tile is-child">
+                                <h3 id="sideHeading"></h3>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
+            <div class="column actions">
+                <button onclick="updateDatabase()" type="button" id="updateDB">Update Database</button>
+                <button onclick="openFile()" type="button" >Select File</button>
+                <button onclick="showPrices()" type="button" >Load Prices</button>
+            </div>
+            
         </div>
     </section>
+    <h3 id="totalPrice"></h3>
 
-
+    <button onclick="debugButton()" type="button" class="debugButton">DEBUG</button>
     <script src="index.js"></script>
 </body>
 </html>

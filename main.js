@@ -5,26 +5,27 @@ const path = require('path')
 const Store = require('electron-store')
 
 const store = new Store()
-const cardExceptions = [
-    { 'id' : 81439174, 'correct_id' : 81439173}
-]
+
+let win
 
 
 // [{'id' : number, 'name': String, 'amount': number}]
 let deck = {'main' : {}, 'extra': {}, 'side': {}, 'mainAmount': 0, 'extraAmount': 0, 'sideAmount': 0}
 
 function createWindow(){
-
     updateCards()
 
-    let win = new BrowserWindow({
+    win = new BrowserWindow({
+        backgroundColor: '#121212',
+        frame: true,
         width: 1280,
         height: 720,
+        title: 'YDK to Decklist',
         webPreferences: {
             nodeIntegration: true
-        }
+        },
     })
-    win.setTitle('YDK to Decklist')
+
     win.loadFile('index.html')
 }
 
@@ -53,6 +54,24 @@ function updateCards(){
         console.log(error)
     })
 }
+
+ipcMain.on('close-app', () => {
+    app.quit()
+})
+
+ipcMain.on('minimize-app', () => {
+    win.minimize()
+})
+
+ipcMain.on('maximize-app', (event, arg) => {
+    if(win.isMaximized()){
+        win.restore()
+    } else {
+        win.maximize()
+    }
+    event.reply('window-maximize', win.isMaximized())
+})
+
 
 ipcMain.on('update-db', (event, arg) => {
     updateCards()
@@ -103,7 +122,6 @@ function parseDeck(parsingDeck){
     while(parsingDeck.length){
             var currentID = parsingDeck[0]
             var amount = calcPerCardAmount(parsingDeck)
-            if(foundException = cardExceptions.find((entry => entry.id == currentID))){currentID = foundException.correct_id} //check for known passcode exceptions (e.g. 'foolish burial' in ygopro2 having multiple passcodes)
             var card = getCardInfo(currentID)
             parsed.push({'id' : card.id, 'name' : card.name, 'amount' : amount, 'type' : card.type, 'prices': card.prices[0]})
             parsingDeck.splice(0, amount)

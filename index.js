@@ -4,25 +4,49 @@ const { dialog } = require('electron').remote
 let deck = {}
 let file
 
+document.getElementById('restoreButton').style.display = 'none'
+
+function closeApp(){
+    ipcRenderer.send('close-app')
+}
+
+function minimizeApp(){
+    ipcRenderer.send('minimize-app')
+}
+
+function maximizeApp(){
+    ipcRenderer.send('maximize-app')
+}
+
+ipcRenderer.on('window-maximize', (event, arg) => {
+    var maximizeButton = document.getElementById('maximizeButton')
+    var restoreButton = document.getElementById('restoreButton')
+
+    if(arg){
+        maximizeButton.style.display = 'none'
+        restoreButton.style.display = 'inline-flex'
+    } else {
+        restoreButton.style.display = 'none'
+        maximizeButton.style.display = 'inline-flex'
+    }
+    
+})
 
 function updateDatabase(){
     ipcRenderer.send('update-db')
 }
 
-function parseDeck(){
-    if(file){
-        ipcRenderer.send('parse-deck', file)
-    } else {
-        alert('You need to select a deck first.')
-    }    
+function showPrices(){
+    var totalPrice = calcPrice(deck.main) + calcPrice(deck.extra) + calcPrice(deck.side)
+    document.getElementById('totalPrice').innerText = "TOTAL PRICE: " + totalPrice.toPrecision(2)
 }
 
-function showPrices(){
-    var totalPrice = 0
-    deck.main.forEach(card => {
-        totalPrice += (card.prices.cardmarket_price * card.amount)
+function calcPrice(decklist){
+    var total = 0
+    decklist.forEach(card => {
+        total += (card.prices.cardmarket_price * card.amount)
     })
-    console.log(totalPrice)
+    return total
 }
 
 function openFile(){
@@ -33,6 +57,7 @@ function openFile(){
         ],
         properties: ['openFile']
     }).toString()
+    ipcRenderer.send('parse-deck', file)
 }
 
 function debugButton(){
