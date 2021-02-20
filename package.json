@@ -15,7 +15,7 @@
     "package": "electron-builder"
   },
   "dependencies": {
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "electron-store": "^5.1.1"
   }
 }
